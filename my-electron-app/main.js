@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: './env' });
 const { app, BrowserWindow, ipcMain, shell, Notification } = require('electron')
 const path = require('path')
 const fs = require('fs')
@@ -13,6 +13,9 @@ const axios = require('axios'); // Add axios import
 
 const BLAND_AI_API_KEY = process.env.BLAND_AI_API_KEY;
 const BLAND_AI_API_ENDPOINT = 'https://api.bland.ai/v1/calls';
+
+// TEMPORARY: Log Bland AI API Key for debugging
+console.log('DEBUG: BLAND_AI_API_KEY loaded:', BLAND_AI_API_KEY ? BLAND_AI_API_KEY.substring(0, 5) + '...' : 'NOT SET');
 
 const uploadsDir = path.join(__dirname, 'uploads');
 // const modelsDir = path.join(__dirname, 'dist', 'models'); // No longer needed directly for IPC
