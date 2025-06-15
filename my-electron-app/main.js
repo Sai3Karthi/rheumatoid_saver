@@ -2,7 +2,6 @@ require('dotenv').config();
 const { app, BrowserWindow, ipcMain, shell, Notification } = require('electron')
 const path = require('path')
 const fs = require('fs')
-<<<<<<< HEAD
 const axios = require('axios'); // Add axios import
 
 // Remove Twilio configuration and client initialization
@@ -14,17 +13,6 @@ const axios = require('axios'); // Add axios import
 
 const BLAND_AI_API_KEY = process.env.BLAND_AI_API_KEY;
 const BLAND_AI_API_ENDPOINT = 'https://api.bland.ai/v1/calls';
-=======
-const twilio = require('twilio');
-
-// Twilio configuration - Get these from your Twilio console
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || 'your_account_sid_here';
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || 'your_auth_token_here';
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER || '+1234567890'; // Your Twilio phone number
-
-// Initialize Twilio client
-const twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
->>>>>>> 30239a6 (first)
 
 const uploadsDir = path.join(__dirname, 'uploads');
 // const modelsDir = path.join(__dirname, 'dist', 'models'); // No longer needed directly for IPC
@@ -37,11 +25,7 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: false,
-<<<<<<< HEAD
       contextIsolation: true,
-=======
-      contextIsolation: false,
->>>>>>> 30239a6 (first)
       preload: path.join(__dirname, 'preload.js'),
       // additionalArguments: [`--models-path=${modelsDir}`] // No longer needed
     }
@@ -70,7 +54,6 @@ app.whenReady().then(() => {
     shell.openExternal('tel:911');
   });
 
-<<<<<<< HEAD
   ipcMain.on('sendEmergencyCall', async (event, patientName, numbers) => {
     if (Array.isArray(numbers) && numbers.length > 0) {
       try {
@@ -172,62 +155,6 @@ app.whenReady().then(() => {
         title: '⚠️ Emergency Alert',
         body: 'No family contacts found. Please add emergency contacts in Section C.'
       }).show();
-=======
-  ipcMain.on('call-family-numbers', async (event, numbers) => {
-    if (Array.isArray(numbers)) {
-      try {
-        // Make calls using Twilio
-        const callPromises = numbers.map(async (number) => {
-          try {
-            console.log('Making Twilio call to:', number);
-            
-            const call = await twilioClient.calls.create({
-              url: 'http://localhost:3001/emergency-twillml', // Our local TwiML server
-              to: number,
-              from: TWILIO_PHONE_NUMBER,
-              statusCallback: 'https://your-webhook-url.com/status', // Optional: for call status updates
-              statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
-              statusCallbackMethod: 'POST'
-            });
-            
-            console.log('Call initiated with SID:', call.sid);
-            return { number, success: true, sid: call.sid };
-          } catch (error) {
-            console.error('Failed to call', number, ':', error.message);
-            return { number, success: false, error: error.message };
-          }
-        });
-        
-        const results = await Promise.all(callPromises);
-        const successfulCalls = results.filter(r => r.success);
-        const failedCalls = results.filter(r => !r.success);
-        
-        console.log('Call results:', { successful: successfulCalls.length, failed: failedCalls.length });
-        
-        // Show notification
-        new Notification({
-          title: 'Emergency Calls Initiated',
-          body: `Successfully called ${successfulCalls.length} contacts. ${failedCalls.length} failed.`
-        }).show();
-        
-      } catch (error) {
-        console.error('Error making Twilio calls:', error);
-        
-        // Fallback to shell.openExternal if Twilio fails
-        console.log('Falling back to shell.openExternal...');
-        numbers.forEach(num => {
-          console.log('Calling family number (fallback):', num);
-          shell.openExternal(`tel:${num}`);
-        });
-        
-        new Notification({
-          title: 'Emergency Alert (Fallback)',
-          body: `Calling family contacts: ${numbers.join(', ')}`
-        }).show();
-      }
-    } else {
-      console.warn('call-family-numbers: Invalid numbers array', numbers);
->>>>>>> 30239a6 (first)
     }
   });
 

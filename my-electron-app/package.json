@@ -4,14 +4,8 @@
   "description": "A sample Electron application",
   "main": "main.js",
   "scripts": {
-<<<<<<< HEAD
-    "start": "npm run start-electron",
+    "start": "electron .",
     "start-electron": "electron .",
-=======
-    "start": "node twilio-server.js & electron .",
-    "start-electron": "electron .",
-    "start-twilio": "node twilio-server.js",
->>>>>>> 30239a6 (first)
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch"
   },
@@ -25,7 +19,6 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-<<<<<<< HEAD
     "@babel/core": "^7.27.4",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
@@ -35,30 +28,18 @@
     "css-loader": "^7.1.2",
     "electron": "^28.0.0",
     "style-loader": "^4.0.0",
-=======
-    "electron": "^28.0.0",
->>>>>>> 30239a6 (first)
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@mediapipe/camera_utils": "^0.3.1675466862",
     "@mediapipe/face_mesh": "^0.4.1633559619",
-=======
->>>>>>> 30239a6 (first)
     "@vladmandic/face-api": "^1.7.13",
     "chart.js": "^4.4.0",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
-<<<<<<< HEAD
     "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-=======
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "twilio": "^4.19.0"
->>>>>>> 30239a6 (first)
   }
 }

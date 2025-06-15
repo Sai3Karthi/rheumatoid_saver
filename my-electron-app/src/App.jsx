@@ -1,20 +1,10 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PatientDetailsModal from './PatientDetailsModal';
 import BlinkDetectionModal from './components/BlinkDetectionModal';
 import EmergencyCallPopup from './components/EmergencyCallPopup';
 import './App.css';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true); // New state for loading screen
-=======
-import React, { useState } from 'react';
-import PatientDetailsModal from './PatientDetailsModal';
-import BlinkDetectionModal from './components/BlinkDetectionModal';
-import './App.css';
-
-function App() {
->>>>>>> 30239a6 (first)
   const [patientDetails, setPatientDetails] = useState({
     name: 'N/A',
     dob: 'N/A',
@@ -36,18 +26,6 @@ function App() {
   const [newNumber, setNewNumber] = useState('');
   const [panicThreshold, setPanicThreshold] = useState(2.5); // blinks/sec
 
-<<<<<<< HEAD
-  useEffect(() => {
-    // Simulate a loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // 3 seconds loading time
-
-    return () => clearTimeout(timer);
-  }, []);
-
-=======
->>>>>>> 30239a6 (first)
   const handleSavePatientDetails = (details) => {
     setPatientDetails(details);
     setIsModalOpen(false);
@@ -71,20 +49,13 @@ function App() {
     if (window.confirm('Are you sure you want to call emergency services? We want to make sure you get the help you need.')) {
       if (window.electronAPI) {
         window.electronAPI.callEmergency();
-<<<<<<< HEAD
       }
     } else {
         window.open('tel:911');
-=======
-      } else {
-        window.open('tel:911');
-      }
->>>>>>> 30239a6 (first)
     }
   };
 
   const handleBlinkTest = () => {
-<<<<<<< HEAD
     console.log('handleBlinkTest called. Setting isBlinkModalOpen to true.');
     setIsBlinkModalOpen(true);
   };
@@ -131,11 +102,6 @@ function App() {
     setIsEmergencyPopupOpen(false);
   };
 
-=======
-    setIsBlinkModalOpen(true);
-  };
-
->>>>>>> 30239a6 (first)
   const handleAddNumber = () => {
     if (newNumber.trim() && /^\+?\d{7,15}$/.test(newNumber.trim())) {
       const updated = [...familyNumbers, newNumber.trim()];
@@ -155,123 +121,6 @@ function App() {
 
   return (
     <div className="App">
-<<<<<<< HEAD
-      {isLoading ? (
-        <div className="loading-screen">
-          <div className="spinner"></div>
-          <p>Loading Care Companion...</p>
-        </div>
-      ) : (
-        <>
-          {/* Header section removed */}
-
-          <div className="container">
-            <div className="section">
-              <h2>Section A: Your Health Profile</h2>
-              <div className="detail-display">
-                <p><strong>Name:</strong> <span>{patientDetails.name}</span></p>
-                <p><strong>Date of Birth:</strong> <span>{patientDetails.dob}</span></p>
-                <p><strong>Medical ID:</strong> <span>{patientDetails.medicalID}</span></p>
-                <p><strong>Photo:</strong> <span>{patientDetails.picture}</span></p>
-                <p><strong>Medical Records:</strong> <span>{patientDetails.medicalRecords}</span></p>
-              </div>
-              <button onClick={() => setIsModalOpen(true)}>Update Your Information</button>
-
-              <h3>How Are You Feeling Today?</h3>
-              <textarea 
-                value={distressMessage}
-                onChange={(e) => setDistressMessage(e.target.value)}
-                placeholder="Please share how you're feeling today. We're here to listen and help..."
-              />
-              <button onClick={handleReportDistress}>Share Your Feelings</button>
-            </div>
-
-            <div className="section">
-              <h2>Section B: Health Monitoring</h2>
-              <p className="feature-description">
-                Start the AI-powered blink detection system to monitor your eye health.
-              </p>
-              <button 
-                onClick={handleBlinkTest}
-                className="primary-button"
-              >
-                🎬 Test Blink Detection Feature
-              </button>
-            </div>
-
-            <div className="section">
-              <h2>Section C: Add Family Numbers</h2>
-              <p className="section-description">
-                Add trusted family or emergency contacts. If a distress event is detected, the app will instantly call all saved numbers.
-              </p>
-              <div className="input-group">
-                <input
-                  type="text"
-                  value={newNumber}
-                  onChange={e => setNewNumber(e.target.value)}
-                  placeholder="Enter phone number (e.g. +1234567890)"
-                />
-                <button onClick={handleAddNumber}>Add</button>
-              </div>
-              <ul className="number-list">
-                {familyNumbers.length === 0 && <li className="empty-list-message">No numbers added yet.</li>}
-                {familyNumbers.map(num => (
-                  <li key={num} className="number-item">
-                    <span className="phone-number-display">{num}</span>
-                    <button className="secondary-button" onClick={() => handleRemoveNumber(num)}>Remove</button>
-                  </li>
-                ))}
-              </ul>
-              <div className="threshold-control">
-                <label htmlFor="panic-threshold" className="label-text">Panic Blink Speed Threshold (blinks/sec):</label>
-                <input
-                  id="panic-threshold"
-                  type="number"
-                  min={1}
-                  max={10}
-                  step={0.1}
-                  value={panicThreshold}
-                  onChange={e => setPanicThreshold(Number(e.target.value))}
-                  className="threshold-input"
-                />
-              </div>
-            </div>
-
-            {Array.from({ length: 24 }, (_, i) => (
-              <div key={i + 2} className="section coming-soon">
-                <h2>Section {String.fromCharCode(67 + i)}: Coming Soon</h2>
-                <p>We're working on more features to support you and your loved ones. Check back soon for updates!</p>
-              </div>
-            ))}
-          </div>
-
-          <PatientDetailsModal 
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSave={handleSavePatientDetails}
-            currentDetails={patientDetails}
-          />
-
-          <BlinkDetectionModal 
-            isOpen={isBlinkModalOpen}
-            onClose={handleCloseBlinkModal}
-            patientName={patientDetails.name !== 'N/A' ? patientDetails.name : 'Patient'}
-            familyNumbers={familyNumbers}
-            panicThreshold={panicThreshold}
-            onEmergencyTrigger={handleBlinkEmergencyTrigger} // New prop for emergency trigger
-          />
-
-          <EmergencyCallPopup 
-            isOpen={isEmergencyPopupOpen}
-            onConfirm={handleConfirmEmergencyCall}
-            onClose={handleCancelEmergencyCall}
-            patientName={patientDetails.name !== 'N/A' ? patientDetails.name : 'Patient'}
-            familyNumbers={familyNumbers}
-            reason={emergencyReason}
-          />
-        </>
-      )}
-=======
       <div className="app-header">
         <div className="header-content">
           <h1>Care Companion</h1>
@@ -316,61 +165,57 @@ function App() {
 
         <div className="section">
           <h2>Section B: Health Monitoring</h2>
-          <p style={{ marginBottom: '20px', fontSize: '1.1em', color: '#636e72' }}>
+          <p className="section-description">
             Advanced health monitoring features to help track your well-being and detect early signs of distress.
           </p>
           
-          <div style={{ marginBottom: '25px' }}>
+          <div className="feature-card">
             <h3>👁️ Blink Detection Analysis</h3>
-            <p style={{ fontSize: '1em', color: '#636e72', marginBottom: '15px' }}>
+            <p className="feature-description">
               Our AI-powered blink detection system can help monitor your eye health and detect patterns that might indicate fatigue, stress, or other health concerns.
             </p>
             <button 
               onClick={handleBlinkTest}
-              style={{
-                background: 'linear-gradient(135deg, #74b9ff, #0984e3)',
-                marginBottom: '15px'
-              }}
+              className="primary-button"
             >
               🎬 Test Blink Detection Feature
             </button>
           </div>
           
-          <div style={{ marginBottom: '25px' }}>
+          <div className="feature-card">
             <h3>🚨 Emergency Assistance</h3>
-            <p style={{ fontSize: '1em', color: '#636e72', marginBottom: '15px' }}>
+            <p className="feature-description">
               If you need immediate assistance, we're here for you 24/7.
             </p>
-            <button onClick={handleEmergencyCall}>🚨 Call for Help (911)</button>
+            <button onClick={handleEmergencyCall} className="primary-button alert-button">🚨 Call for Help (911)</button>
           </div>
         </div>
 
         <div className="section">
           <h2>Section C: Add Family Numbers</h2>
-          <p style={{ fontSize: '1.1em', color: '#636e72', marginBottom: '15px' }}>
+          <p className="section-description">
             Add trusted family or emergency contacts. If a distress event is detected, the app will instantly call all saved numbers.
           </p>
-          <div style={{ width: '100%', maxWidth: 400, margin: '0 auto 20px auto', display: 'flex', gap: 10 }}>
+          <div className="input-group">
             <input
               type="text"
               value={newNumber}
               onChange={e => setNewNumber(e.target.value)}
               placeholder="Enter phone number (e.g. +1234567890)"
-              style={{ flex: 1 }}
             />
             <button onClick={handleAddNumber}>Add</button>
           </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {familyNumbers.length === 0 && <li style={{ color: '#b2bec3' }}>No numbers added yet.</li>}
+          <ul className="number-list">
+            {familyNumbers.length === 0 && <li className="empty-list-message">No numbers added yet.</li>}
             {familyNumbers.map(num => (
-              <li key={num} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f1f2f6', borderRadius: 8, padding: '8px 14px', marginBottom: 8 }}>
-                <span style={{ fontFamily: 'monospace', fontSize: '1.1em' }}>{num}</span>
-                <button className="secondary" style={{ padding: '6px 14px', fontSize: '0.95em' }} onClick={() => handleRemoveNumber(num)}>Remove</button>
+              <li key={num} className="number-item">
+                <span className="phone-number-display">{num}</span>
+                <button className="secondary-button" onClick={() => handleRemoveNumber(num)}>Remove</button>
               </li>
             ))}
           </ul>
-          <div style={{ marginTop: 20 }}>
-            <label htmlFor="panic-threshold" style={{ fontWeight: 600, color: '#636e72' }}>Panic Blink Speed Threshold (blinks/sec):</label>
+          <div className="threshold-control">
+            <label htmlFor="panic-threshold" className="label-text">Panic Blink Speed Threshold (blinks/sec):</label>
             <input
               id="panic-threshold"
               type="number"
@@ -379,13 +224,13 @@ function App() {
               step={0.1}
               value={panicThreshold}
               onChange={e => setPanicThreshold(Number(e.target.value))}
-              style={{ width: 80, marginLeft: 10 }}
+              className="threshold-input"
             />
           </div>
         </div>
 
         {Array.from({ length: 24 }, (_, i) => (
-          <div key={i + 2} className="section">
+          <div key={i + 2} className="section coming-soon">
             <h2>Section {String.fromCharCode(67 + i)}: Coming Soon</h2>
             <p>We're working on more features to support you and your loved ones. Check back soon for updates!</p>
           </div>
@@ -401,18 +246,23 @@ function App() {
 
       <BlinkDetectionModal 
         isOpen={isBlinkModalOpen}
-        onClose={() => setIsBlinkModalOpen(false)}
+        onClose={handleCloseBlinkModal}
         patientName={patientDetails.name !== 'N/A' ? patientDetails.name : 'Patient'}
         familyNumbers={familyNumbers}
         panicThreshold={panicThreshold}
+        onEmergencyTrigger={handleBlinkEmergencyTrigger} // New prop for emergency trigger
       />
->>>>>>> 30239a6 (first)
+
+      <EmergencyCallPopup 
+        isOpen={isEmergencyPopupOpen}
+        onConfirm={handleConfirmEmergencyCall}
+        onClose={handleCancelEmergencyCall}
+        patientName={patientDetails.name !== 'N/A' ? patientDetails.name : 'Patient'}
+        familyNumbers={familyNumbers}
+        reason={emergencyReason}
+      />
     </div>
   );
 }
 
-<<<<<<< HEAD
-export default App;
-=======
 export default App; 
->>>>>>> 30239a6 (first)
