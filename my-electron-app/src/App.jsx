@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PatientDetailsModal from './PatientDetailsModal';
 import BlinkDetectionModal from './components/BlinkDetectionModal';
 import EmergencyCallPopup from './components/EmergencyCallPopup';
+import SettingsModal from './components/SettingsModal';
+import themeManager from './utils/themeManager';
 import './App.css';
 
 function App() {
@@ -26,6 +28,10 @@ function App() {
   });
   const [newNumber, setNewNumber] = useState('');
   const [panicThreshold, setPanicThreshold] = useState(2.5); // blinks/sec
+  const [isEmergencyPopupOpen, setIsEmergencyPopupOpen] = useState(false);
+  const [emergencyReason, setEmergencyReason] = useState('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('default');
 
   // Loading screen effect
   useEffect(() => {
@@ -91,10 +97,6 @@ function App() {
     setIsBlinkModalOpen(false);
   };
 
-  // New state for emergency call popup
-  const [isEmergencyPopupOpen, setIsEmergencyPopupOpen] = useState(false);
-  const [emergencyReason, setEmergencyReason] = useState('');
-
   const handleBlinkEmergencyTrigger = (reason) => {
     // Directly trigger the emergency call via IPC when excessive blinking is detected
     console.log(`Blink-triggered emergency: ${reason}. Attempting to call family numbers directly.`);
@@ -143,6 +145,15 @@ function App() {
     const updated = familyNumbers.filter(n => n !== num);
     setFamilyNumbers(updated);
     localStorage.setItem('familyNumbers', JSON.stringify(updated));
+  };
+
+  const handleThemeChange = (theme) => {
+    setCurrentTheme(theme);
+    themeManager.applyTheme(theme);
+  };
+
+  const handleOpenSettings = () => {
+    setIsSettingsOpen(true);
   };
 
   // Loading screen
@@ -205,6 +216,14 @@ function App() {
                 <button onClick={() => console.log('User Guide')}>📖 User Guide</button>
                 <button onClick={() => console.log('About')}>ℹ️ About</button>
                 <button onClick={() => console.log('Support')}>🆘 Support</button>
+              </div>
+            </div>
+            <div className="menu-item">
+              <span>Settings</span>
+              <div className="dropdown-menu">
+                <button onClick={handleOpenSettings}>⚙️ App Settings</button>
+                <button onClick={() => console.log('Preferences')}>🎨 Themes</button>
+                <button onClick={() => console.log('Accessibility')}>♿ Accessibility</button>
               </div>
             </div>
           </nav>
@@ -289,6 +308,13 @@ function App() {
         patientName={patientDetails.name !== 'N/A' ? patientDetails.name : 'Patient'}
         familyNumbers={familyNumbers}
         reason={emergencyReason}
+      />
+
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        currentTheme={currentTheme}
+        onThemeChange={handleThemeChange}
       />
     </div>
   );

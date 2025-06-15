@@ -2,11 +2,132 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--background-color);
   min-height: 100vh;
   box-sizing: border-box;
   overflow-x: hidden; /* Prevent horizontal scrollbar from body */
+  color: var(--text-color);
 }
+
+/* CSS Custom Properties for Theming */
+:root {
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background-color: #f5f7fa;
+  --text-color: #2c3e50;
+  --muted-text-color: #6c757d;
+  --accent-color: #667eea;
+  --section-bg: #ffffff;
+  --section-border: #667eea;
+  --input-bg: #ffffff;
+  --input-border: #e9ecef;
+  --button-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card-bg: #f8f9fa;
+  --card-border: #667eea;
+  --base-font-size: 16px;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+  --background-color: #1a202c;
+  --text-color: #e2e8f0;
+  --muted-text-color: #bdc3c7;
+}
+
+.dark-mode body {
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  color: var(--text-color);
+}
+
+.dark-mode .App {
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+.dark-mode .section {
+  background: #2d3748;
+  color: var(--text-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .section:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .detail-display {
+  background: #4a5568;
+  color: var(--text-color);
+  border-left-color: var(--accent-color);
+}
+
+.dark-mode h2 {
+  color: var(--text-color);
+}
+
+.dark-mode h2::after {
+  background: var(--gradient);
+}
+
+.dark-mode .detail-display p {
+  color: var(--muted-text-color);
+}
+
+.dark-mode .detail-display strong {
+  color: var(--text-color);
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="number"],
+.dark-mode textarea {
+  background: #4a5568;
+  border-color: #718096;
+  color: var(--text-color);
+}
+
+.dark-mode input[type="text"]:focus,
+.dark-mode input[type="number"]:focus,
+.dark-mode textarea:focus {
+  border-color: var(--accent-color);
+}
+
+.dark-mode .number-item {
+  background: #4a5568;
+  border-left-color: #48bb78;
+}
+
+.dark-mode .phone-number-display {
+  color: var(--text-color);
+}
+
+.dark-mode .empty-list-message {
+  color: var(--muted-text-color);
+}
+
+/* Font Size Adjustments */
+[data-font-size="small"] {
+  font-size: 14px;
+}
+
+[data-font-size="medium"] {
+  font-size: 16px;
+}
+
+[data-font-size="large"] {
+  font-size: 18px;
+}
+
+[data-font-size="small"] h1 { font-size: 1.8em; }
+[data-font-size="small"] h2 { font-size: 1.3em; }
+[data-font-size="small"] h3 { font-size: 1.1em; }
+
+[data-font-size="medium"] h1 { font-size: 2em; }
+[data-font-size="medium"] h2 { font-size: 1.5em; }
+[data-font-size="medium"] h3 { font-size: 1.2em; }
+
+[data-font-size="large"] h1 { font-size: 2.2em; }
+[data-font-size="large"] h2 { font-size: 1.7em; }
+[data-font-size="large"] h3 { font-size: 1.3em; }
 
 #root {
   width: 100vw;
@@ -18,8 +139,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
   padding: 0; /* Remove all padding from the main app container */
-  background: none;
-  color: #2c3e50;
+  background: var(--background-color);
+  color: var(--text-color);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -321,7 +442,7 @@ html {
   background: none;
   text-align: left;
   cursor: pointer;
-  color: #2c3e50;
+  color: var(--text-color);
   font-size: 14px;
   transition: all 0.2s ease;
   margin: 0;
@@ -330,20 +451,20 @@ html {
 }
 
 .dropdown-menu button:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-color);
   color: white;
   transform: none;
   box-shadow: none;
 }
 
 .dropdown-menu button.emergency-btn {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  background: #e74c3c;
   color: white;
   font-weight: 600;
 }
 
 .dropdown-menu button.emergency-btn:hover {
-  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  background: #c0392b;
   transform: scale(1.02);
 }
 
@@ -404,7 +525,7 @@ html {
 }
 
 .section {
-  background: white;
+  background: var(--section-bg);
   border-radius: 16px;
   padding: 32px 28px 28px 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
@@ -417,6 +538,7 @@ html {
   display: flex;
   flex-direction: column;
   flex: 1; /* Allow sections to grow and fill available space */
+  border-left: 4px solid var(--section-border);
 }
 
 .section::before {
@@ -436,7 +558,7 @@ html {
 
 .section:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.13);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
 }
 
 .section:nth-child(3) {
@@ -444,7 +566,7 @@ html {
 }
 
 h2 {
-  color: #2c3e50;
+  color: var(--text-color);
   margin-bottom: 18px;
   font-size: 1.5em;
   position: relative;
@@ -457,14 +579,14 @@ h2::after {
   display: block;
   width: 48px;
   height: 4px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient);
   border-radius: 2px;
   margin-top: 6px;
   margin-left: 0;
 }
 
 h3 {
-  color: #34495e;
+  color: var(--text-color);
   margin: 20px 0 10px 0;
   font-size: 1.2em;
   text-align: left;
@@ -472,32 +594,32 @@ h3 {
 
 h3::before {
   content: '▶ ';
-  color: #667eea;
+  color: var(--accent-color);
 }
 
 /* Form Elements */
 .detail-display {
-  background: #f8f9fa;
+  background: var(--card-bg);
   padding: 15px;
   border-radius: 8px;
   margin: 15px 0;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--card-border);
 }
 
 .detail-display p {
   margin: 8px 0;
-  color: #495057;
+  color: var(--text-color);
 }
 
 .detail-display strong {
-  color: #2c3e50;
+  color: var(--text-color);
   font-weight: 600;
 }
 
 label {
   display: block;
   margin: 10px 0 5px 0;
-  color: #2c3e50;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -506,18 +628,20 @@ input[type="number"],
 textarea {
   width: 100%;
   padding: 10px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--input-border);
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 input[type="text"]:focus,
 input[type="number"]:focus,
 textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -528,7 +652,7 @@ textarea {
 
 /* Buttons */
 button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--button-gradient);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -559,7 +683,7 @@ button:hover::before {
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 button.secondary {
@@ -590,13 +714,13 @@ button.secondary:hover {
 }
 
 .feature-description {
-  color: #666;
+  color: var(--muted-text-color);
   margin: 10px 0;
   line-height: 1.6;
 }
 
 .section-description {
-  color: #666;
+  color: var(--muted-text-color);
   margin-bottom: 20px;
   font-style: italic;
 }
@@ -628,23 +752,25 @@ button.secondary:hover {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background: #f8f9fa;
+  background: var(--card-bg);
   border-radius: 6px;
   margin: 5px 0;
-  border-left: 3px solid #27ae60;
+  border-left: 3px solid var(--accent-color);
+  color: var(--text-color);
 }
 
 .phone-number-display {
   font-family: monospace;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text-color);
 }
 
 .empty-list-message {
   text-align: center;
-  color: #95a5a6;
+  color: var(--muted-text-color);
   font-style: italic;
   padding: 20px;
+  opacity: 0.7;
 }
 
 /* Threshold Control */
@@ -659,7 +785,7 @@ button.secondary:hover {
 .label-text {
   display: block;
   margin-bottom: 10px;
-  color: #2c3e50;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -678,11 +804,11 @@ button.secondary:hover {
 }
 
 .coming-soon h2 {
-  color: #7f8c8d;
+  color: var(--muted-text-color);
 }
 
 .coming-soon p {
-  color: #95a5a6;
+  color: var(--muted-text-color);
   font-style: italic;
 }
 
