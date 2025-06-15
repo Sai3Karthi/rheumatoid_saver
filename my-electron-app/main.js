@@ -1,5 +1,5 @@
 require('dotenv').config({ path: './env' });
-const { app, BrowserWindow, ipcMain, shell, Notification } = require('electron')
+const { app, BrowserWindow, ipcMain, shell, Notification, Menu } = require('electron')
 const path = require('path')
 const fs = require('fs')
 const axios = require('axios'); // Add axios import
@@ -24,21 +24,86 @@ console.log('Uploads directory:', uploadsDir);
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
+    show: true, // Show window immediately
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
-      // additionalArguments: [`--models-path=${modelsDir}`] // No longer needed
     }
   })
+
+  // Create custom menu
+  const template = [
+    {
+      label: 'Care Companion',
+      submenu: [
+        {
+          label: 'Open Patient Details',
+          accelerator: 'CmdOrCtrl+P',
+          click: () => {
+            win.webContents.send('open-patient-modal');
+          }
+        },
+        {
+          label: 'Open Blink Detection',
+          accelerator: 'CmdOrCtrl+B',
+          click: () => {
+            win.webContents.send('open-blink-modal');
+          }
+        },
+        {
+          label: 'Emergency Call',
+          accelerator: 'CmdOrCtrl+E',
+          click: () => {
+            win.webContents.send('call-emergency');
+          }
+        },
+        { type: 'separator' },
+        {
+          label: 'Quit',
+          accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
+          click: () => {
+            app.quit();
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
   win.loadFile(path.join(__dirname, 'dist', 'index.html')) // Load index.html from dist
 }
 
 app.whenReady().then(() => {
   createWindow()
+
+  // Window control handlers
+  ipcMain.on('minimize-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.minimize();
+  });
+
+  ipcMain.on('maximize-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      if (win.isMaximized()) {
+        win.unmaximize();
+      } else {
+        win.maximize();
+      }
+    }
+  });
+
+  ipcMain.on('close-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.close();
+  });
 
   ipcMain.on('report-distress', (event, message) => {
     console.log('Distress reported:', message);

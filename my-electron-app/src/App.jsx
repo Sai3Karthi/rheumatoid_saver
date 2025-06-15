@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PatientDetailsModal from './PatientDetailsModal';
 import BlinkDetectionModal from './components/BlinkDetectionModal';
 import EmergencyCallPopup from './components/EmergencyCallPopup';
 import './App.css';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [patientDetails, setPatientDetails] = useState({
     name: 'N/A',
     dob: 'N/A',
@@ -25,6 +26,31 @@ function App() {
   });
   const [newNumber, setNewNumber] = useState('');
   const [panicThreshold, setPanicThreshold] = useState(2.5); // blinks/sec
+
+  // Loading screen effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Menu event listeners - these will now be handled by native Electron menu, no longer needed in React
+  useEffect(() => {
+    if (window.electronAPI) {
+      const handleOpenPatientModal = () => setIsModalOpen(true);
+      const handleOpenBlinkModal = () => setIsBlinkModalOpen(true);
+      const handleCallEmergency = () => handleEmergencyCall();
+
+      window.electronAPI.onOpenPatientModal(handleOpenPatientModal);
+      window.electronAPI.onOpenBlinkModal(handleOpenBlinkModal);
+      window.electronAPI.onCallEmergency(handleCallEmergency);
+
+      return () => {
+        // Cleanup listeners if needed
+      };
+    }
+  }, []);
 
   const handleSavePatientDetails = (details) => {
     setPatientDetails(details);
@@ -119,123 +145,90 @@ function App() {
     localStorage.setItem('familyNumbers', JSON.stringify(updated));
   };
 
+  // Loading screen
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-content">
+          <div className="loading-spinner"></div>
+          <h1>Care Companion</h1>
+          <p>Loading your personalized care experience...</p>
+          <div className="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div className="loading-progress">
+            <div className="progress-bar">
+              <div className="progress-fill"></div>
+            </div>
+            <p className="progress-text">Initializing care systems...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
-      <div className="app-header">
-        <div className="header-content">
-          <h1>Care Companion</h1>
-          <p>A gentle, caring platform designed to support you and your loved ones on your health journey. We're here to help make managing rheumatoid care easier and more comfortable.</p>
-        </div>
-        <div className="profile-picture-container">
-          {patientDetails.pictureUrl ? (
-            <div className="profile-picture">
-              <img 
-                src={patientDetails.pictureUrl} 
-                alt="Your Profile" 
-              />
+      <header className="App-header">
+        <h1>Care Companion</h1>
+      </header>
+      <main>
+        <div className="container">
+          <section className="section" id="section-a">
+            <h2>Section A: Patient Information</h2>
+            <div className="detail-display">
+              <p><strong>Name:</strong> {patientDetails.name}</p>
+              <p><strong>Date of Birth:</strong> {patientDetails.dob}</p>
+              <p><strong>Medical ID:</strong> {patientDetails.medicalID}</p>
+              {patientDetails.pictureUrl && (
+                <div className="patient-picture">
+                  <img src={patientDetails.pictureUrl} alt="Patient" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="profile-picture">
-              👤
+            <button onClick={() => setIsModalOpen(true)}>Open Patient Details</button>
+          </section>
+          <section className="section" id="section-b">
+            <h2>Section B: Real-time Monitoring</h2>
+            <div className="detail-display">
+              <p><strong>Current Status:</strong> Monitoring Active</p>
+              <p><strong>Last Check:</strong> {new Date().toLocaleTimeString()}</p>
+              <p><strong>Blink Detection:</strong> Ready</p>
             </div>
-          )}
+            <button onClick={() => setIsBlinkModalOpen(true)}>Open Blink Detection</button>
+          </section>
+          <section className="section" id="section-c">
+            <h2>Section C: Emergency Contacts & Actions</h2>
+            <div className="detail-display">
+              <p><strong>Emergency Contacts:</strong></p>
+              {familyNumbers.length > 0 ? (
+                <ul className="number-list">
+                  {familyNumbers.map((num, index) => (
+                    <li key={index} className="number-item">
+                      <span className="phone-number-display">{num}</span>
+                      <button onClick={() => handleRemoveNumber(num)} className="secondary">Remove</button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="empty-list-message">No emergency contacts added yet.</p>
+              )}
+              <div className="input-group">
+                <input
+                  type="text"
+                  value={newNumber}
+                  onChange={(e) => setNewNumber(e.target.value)}
+                  placeholder="Enter phone number"
+                />
+                <button onClick={handleAddNumber}>Add Contact</button>
+              </div>
+            </div>
+            <button onClick={handleEmergencyCall} className="alert-button">Emergency Call</button>
+          </section>
         </div>
-      </div>
-
-      <div className="container">
-        <div className="section">
-          <h2>Section A: Your Health Profile</h2>
-          <div className="detail-display">
-            <p><strong>Name:</strong> <span>{patientDetails.name}</span></p>
-            <p><strong>Date of Birth:</strong> <span>{patientDetails.dob}</span></p>
-            <p><strong>Medical ID:</strong> <span>{patientDetails.medicalID}</span></p>
-            <p><strong>Photo:</strong> <span>{patientDetails.picture}</span></p>
-            <p><strong>Medical Records:</strong> <span>{patientDetails.medicalRecords}</span></p>
-          </div>
-          <button onClick={() => setIsModalOpen(true)}>Update Your Information</button>
-
-          <h3>How Are You Feeling Today?</h3>
-          <textarea 
-            value={distressMessage}
-            onChange={(e) => setDistressMessage(e.target.value)}
-            placeholder="Please share how you're feeling today. We're here to listen and help..."
-          />
-          <button onClick={handleReportDistress}>Share Your Feelings</button>
-        </div>
-
-        <div className="section">
-          <h2>Section B: Health Monitoring</h2>
-          <p className="section-description">
-            Advanced health monitoring features to help track your well-being and detect early signs of distress.
-          </p>
-          
-          <div className="feature-card">
-            <h3>👁️ Blink Detection Analysis</h3>
-            <p className="feature-description">
-              Our AI-powered blink detection system can help monitor your eye health and detect patterns that might indicate fatigue, stress, or other health concerns.
-            </p>
-            <button 
-              onClick={handleBlinkTest}
-              className="primary-button"
-            >
-              🎬 Test Blink Detection Feature
-            </button>
-          </div>
-          
-          <div className="feature-card">
-            <h3>🚨 Emergency Assistance</h3>
-            <p className="feature-description">
-              If you need immediate assistance, we're here for you 24/7.
-            </p>
-            <button onClick={handleEmergencyCall} className="primary-button alert-button">🚨 Call for Help (911)</button>
-          </div>
-        </div>
-
-        <div className="section">
-          <h2>Section C: Add Family Numbers</h2>
-          <p className="section-description">
-            Add trusted family or emergency contacts. If a distress event is detected, the app will instantly call all saved numbers.
-          </p>
-          <div className="input-group">
-            <input
-              type="text"
-              value={newNumber}
-              onChange={e => setNewNumber(e.target.value)}
-              placeholder="Enter phone number (e.g. +1234567890)"
-            />
-            <button onClick={handleAddNumber}>Add</button>
-          </div>
-          <ul className="number-list">
-            {familyNumbers.length === 0 && <li className="empty-list-message">No numbers added yet.</li>}
-            {familyNumbers.map(num => (
-              <li key={num} className="number-item">
-                <span className="phone-number-display">{num}</span>
-                <button className="secondary-button" onClick={() => handleRemoveNumber(num)}>Remove</button>
-              </li>
-            ))}
-          </ul>
-          <div className="threshold-control">
-            <label htmlFor="panic-threshold" className="label-text">Panic Blink Speed Threshold (blinks/sec):</label>
-            <input
-              id="panic-threshold"
-              type="number"
-              min={1}
-              max={10}
-              step={0.1}
-              value={panicThreshold}
-              onChange={e => setPanicThreshold(Number(e.target.value))}
-              className="threshold-input"
-            />
-          </div>
-        </div>
-
-        {Array.from({ length: 24 }, (_, i) => (
-          <div key={i + 2} className="section coming-soon">
-            <h2>Section {String.fromCharCode(67 + i)}: Coming Soon</h2>
-            <p>We're working on more features to support you and your loved ones. Check back soon for updates!</p>
-          </div>
-        ))}
-      </div>
+      </main>
 
       <PatientDetailsModal 
         isOpen={isModalOpen}

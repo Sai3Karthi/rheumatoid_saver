@@ -12,6 +12,9 @@ dist/
 env
 .env
 
+# VS Code
+.vscode/
+
 # Logs
 npm-debug.log*
 

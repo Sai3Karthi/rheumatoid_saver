@@ -11,6 +11,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   callEmergency: () => ipcRenderer.send('call-emergency'),
   savePatientDetails: (details) => ipcRenderer.invoke('save-patient-details', details),
   callFamilyNumbers: (numbers) => ipcRenderer.send('call-family-numbers', numbers),
+  // Window control functions
+  minimizeWindow: () => ipcRenderer.send('minimize-window'),
+  maximizeWindow: () => ipcRenderer.send('maximize-window'),
+  closeWindow: () => ipcRenderer.send('close-window'),
+  // Menu-related functions
+  onOpenPatientModal: (callback) => ipcRenderer.on('open-patient-modal', callback),
+  onOpenBlinkModal: (callback) => ipcRenderer.on('open-blink-modal', callback),
+  onCallEmergency: (callback) => ipcRenderer.on('call-emergency', callback),
   // Removed: getModelsPath: getModelsPath
 })
 
