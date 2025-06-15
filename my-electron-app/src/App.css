@@ -1,0 +1,375 @@
+.App {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header section with profile picture */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.header-content {
+  flex: 1;
+  text-align: left;
+}
+
+.profile-picture-container {
+  position: relative;
+  margin-left: 20px;
+  flex-shrink: 0;
+}
+
+.profile-picture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #74b9ff;
+  box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+  object-fit: cover;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  color: #74b9ff;
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+h1 {
+  color: #34495e;
+  margin-bottom: 10px;
+  font-size: 2.8em;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+h1::before {
+  content: "❤️ ";
+  margin-right: 10px;
+}
+
+h1::after {
+  content: " ❤️";
+  margin-left: 10px;
+}
+
+p {
+  font-size: 1.3em;
+  margin-bottom: 30px;
+  color: #5a6c7d;
+  line-height: 1.6;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 0 20px;
+  flex-grow: 1;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #74b9ff, #0984e3, #74b9ff);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -200% 0; }
+}
+
+.section:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(31, 38, 135, 0.25);
+}
+
+.section:nth-child(1) {
+  border-left: 6px solid #00b894;
+}
+
+.section:nth-child(2) {
+  border-left: 6px solid #e17055;
+}
+
+h2 {
+  color: #2d3436;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 400;
+  position: relative;
+}
+
+h2::before {
+  content: "🏥 ";
+  margin-right: 8px;
+}
+
+h3 {
+  color: #636e72;
+  margin-top: 25px;
+  margin-bottom: 20px;
+  font-size: 1.6em;
+  font-weight: 400;
+}
+
+h3::before {
+  content: "💬 ";
+  margin-right: 8px;
+}
+
+.detail-display {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 25px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid rgba(116, 185, 255, 0.2);
+}
+
+.detail-display p {
+  margin-bottom: 15px;
+  color: #2d3436;
+  text-align: left;
+  font-size: 1.1em;
+  line-height: 1.8;
+}
+
+.detail-display strong {
+  color: #0984e3;
+  font-weight: 600;
+}
+
+/* Remove the old patient image container since we moved it to header */
+.patient-image-container {
+  display: none;
+}
+
+.patient-image {
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: 15px;
+  border: 3px solid #74b9ff;
+  box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+}
+
+label {
+  color: #2d3436;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
+  text-align: left;
+  width: 90%;
+  font-size: 1.1em;
+}
+
+input[type="text"],
+input[type="date"],
+textarea {
+  width: 90%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 2px solid #dfe6e9;
+  background-color: #ffffff;
+  color: #2d3436;
+  border-radius: 12px;
+  font-size: 1.1em;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  border-color: #74b9ff;
+  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.15);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin: 10px;
+  transition: all 0.3s ease-in-out;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #0984e3, #74b9ff);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(116, 185, 255, 0.4);
+}
+
+button.secondary {
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+  box-shadow: 0 4px 15px rgba(162, 155, 254, 0.3);
+}
+
+button.secondary:hover {
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  box-shadow: 0 6px 20px rgba(162, 155, 254, 0.4);
+}
+
+/* Emergency button special styling */
+.section:nth-child(2) button {
+  background: linear-gradient(135deg, #fd79a8, #e84393);
+  box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
+  font-size: 1.3em;
+  padding: 18px 35px;
+}
+
+.section:nth-child(2) button:hover {
+  background: linear-gradient(135deg, #e84393, #fd79a8);
+  box-shadow: 0 6px 20px rgba(253, 121, 168, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  h1 {
+    font-size: 2.4em;
+  }
+  
+  h2 {
+    font-size: 1.8em;
+  }
+  
+  .app-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-picture-container {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
+  }
+  
+  h1 {
+    font-size: 2.2em;
+  }
+  
+  h2 {
+    font-size: 1.6em;
+  }
+  
+  .App {
+    padding: 15px;
+  }
+  
+  .section {
+    min-height: 350px;
+    padding: 25px;
+  }
+  
+  .app-header {
+    padding: 0 15px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .section::before {
+    animation: none;
+  }
+  
+  button::before {
+    display: none;
+  }
+  
+  .section:hover {
+    transform: none;
+  }
+  
+  button:hover {
+    transform: none;
+  }
+} 

@@ -1,0 +1,159 @@
+.emergency-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(44, 62, 80, 0.95); /* Darker overlay for emergency */
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000; /* Higher than other modals */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+.emergency-popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.emergency-popup-content {
+  background: linear-gradient(145deg, #ffffff, #f0f2f5); /* Light, soft background */
+  padding: 50px;
+  border-radius: 30px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.4); /* More prominent shadow */
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  position: relative;
+  transform: translateY(-80px) scale(0.8);
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  border: 4px solid rgba(255, 99, 71, 0.5); /* Emergency border color */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emergency-popup-overlay.show .emergency-popup-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.emergency-popup-content h2 {
+  color: #c0392b; /* Strong red for emergency */
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 2.8em;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.popup-message {
+  font-size: 1.5em;
+  color: #34495e;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.patient-name-highlight {
+  color: #2980b9;
+  font-weight: 700;
+}
+
+.reason-highlight {
+  color: #e67e22;
+  font-weight: 700;
+}
+
+.popup-instruction {
+  font-size: 1.3em;
+  color: #555;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.family-numbers-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 30px auto;
+  max-width: 300px;
+  background: #ecf0f1;
+  border-radius: 15px;
+  padding: 15px 20px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.family-numbers-list li {
+  font-size: 1.2em;
+  color: #2c3e50;
+  padding: 8px 0;
+  border-bottom: 1px solid #bdc3c7;
+}
+
+.family-numbers-list li:last-child {
+  border-bottom: none;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.confirm-button,
+.cancel-button {
+  padding: 18px 35px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 1.4em;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #e74c3c, #c0392b); /* Red for confirmation */
+  color: white;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(192, 57, 43, 0.4);
+}
+
+.cancel-button {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d); /* Grey for cancel */
+  color: white;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(127, 140, 141, 0.4);
+}
+
+@media (max-width: 768px) {
+  .emergency-popup-content {
+    padding: 30px;
+    width: 95%;
+  }
+  .emergency-popup-content h2 {
+    font-size: 2em;
+  }
+  .popup-message,
+  .popup-instruction {
+    font-size: 1.2em;
+  }
+  .confirm-button,
+  .cancel-button {
+    padding: 15px 25px;
+    font-size: 1.2em;
+  }
+} 
