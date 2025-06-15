@@ -36,47 +36,6 @@ function createWindow () {
     }
   })
 
-  // Create custom menu
-  const template = [
-    {
-      label: 'Care Companion',
-      submenu: [
-        {
-          label: 'Open Patient Details',
-          accelerator: 'CmdOrCtrl+P',
-          click: () => {
-            win.webContents.send('open-patient-modal');
-          }
-        },
-        {
-          label: 'Open Blink Detection',
-          accelerator: 'CmdOrCtrl+B',
-          click: () => {
-            win.webContents.send('open-blink-modal');
-          }
-        },
-        {
-          label: 'Emergency Call',
-          accelerator: 'CmdOrCtrl+E',
-          click: () => {
-            win.webContents.send('call-emergency');
-          }
-        },
-        { type: 'separator' },
-        {
-          label: 'Quit',
-          accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
-          click: () => {
-            app.quit();
-          }
-        }
-      ]
-    }
-  ];
-
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-
   win.loadFile(path.join(__dirname, 'dist', 'index.html')) // Load index.html from dist
 }
 

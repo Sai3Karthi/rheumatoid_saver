@@ -101,8 +101,8 @@ html {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.1) rotate(180deg); }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 .loading-content h1 {
@@ -161,10 +161,10 @@ html {
 
 @keyframes bounce {
   0%, 80%, 100% {
-    transform: scale(0) rotate(0deg);
+    transform: scale(0);
   }
   40% {
-    transform: scale(1.2) rotate(180deg);
+    transform: scale(1.2);
   }
 }
 
@@ -235,10 +235,159 @@ html {
   z-index: 100; /* Ensure it's above other content when scrolling */
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 .App-header h1 {
   margin: 0;
   font-size: 1.8em;
   font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Header Menu Styles */
+.header-menu {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.menu-item {
+  position: relative;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.menu-item span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-item span::after {
+  content: '▼';
+  font-size: 10px;
+  opacity: 0.7;
+  transition: transform 0.3s ease;
+}
+
+.menu-item:hover span::after {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.menu-item:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: #2c3e50;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  margin: 0;
+  border-radius: 0;
+  font-weight: 500;
+}
+
+.dropdown-menu button:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: none;
+  box-shadow: none;
+}
+
+.dropdown-menu button.emergency-btn {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.dropdown-menu button.emergency-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: scale(1.02);
+}
+
+/* Responsive Header Menu */
+@media (max-width: 1024px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .header-menu {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .menu-item {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .dropdown-menu {
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-menu {
+    gap: 10px;
+  }
+  
+  .menu-item {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .dropdown-menu {
+    min-width: 160px;
+  }
+  
+  .dropdown-menu button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }
 
 /* Container and Section Layout */

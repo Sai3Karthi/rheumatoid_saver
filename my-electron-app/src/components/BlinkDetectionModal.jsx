@@ -16,6 +16,7 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
   const [consecutiveBlinks, setConsecutiveBlinks] = useState(0);
   const [emergencyTriggered, setEmergencyTriggered] = useState(false);
   const [showBoundingBoxes, setShowBoundingBoxes] = useState(true); // Toggle for landmark visualization
+  const [pendingBlink, setPendingBlink] = useState(false); // Visual feedback for pending blink
 
   const videoRef = useRef(null); // This will now hold a programmatic video element, never appended to DOM
   const canvasRef = useRef(null);
@@ -34,9 +35,11 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
   const blinkStartTimeRef = useRef(0);
   const minBlinkDuration = useRef(50);
   const maxBlinkDuration = useRef(500);
+  const pendingBlinkRef = useRef(false); // New: track if we have a pending blink to validate
 
   const prevLandmarksRef = useRef(null);
   const blinkTimesRef = useRef([]); // Track timestamps of recent blinks
+  const faceDetectionTimeoutRef = useRef(null); // Track face detection timeout
 
   // Create refs for props that might cause re-renders if in useCallback dependencies
   const patientNameRef = useRef(patientName);
@@ -152,56 +155,60 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
         if (!isCurrentlyClosedRef.current) { // If it was previously open (transition from open to closed)
           isCurrentlyClosedRef.current = true;
           blinkStartTimeRef.current = currentTime; // Record when blink started
+          pendingBlinkRef.current = true; // Mark that we have a pending blink to validate
+          setPendingBlink(true); // Visual feedback
           console.log('onResults: Eye closed, recording blink start time.');
 
-          // Reduced cooldown for faster detection
-          if (currentTime - lastBlinkTimeRef.current > cooldown.current) {
-            // Valid blink detected and not in cooldown
-            setBlinkCount(prev => {
-              const newCount = prev + 1;
-              console.log(`onResults: Blink count increased to ${newCount}`);
-              return newCount;
-            });
-            lastBlinkTimeRef.current = currentTime;
-
-            // Add current blink time to the array
-            blinkTimesRef.current.push(currentTime);
-
-            // Remove blinks older than 3 seconds
-            const threeSecondsAgo = currentTime - blinkTimeoutRef.current;
-            blinkTimesRef.current = blinkTimesRef.current.filter(time => time > threeSecondsAgo);
-
-            // Check if we have 5 or more blinks within 3 seconds
-            if (blinkTimesRef.current.length >= consecutiveEmergencyBlinksRef.current && !emergencyTriggeredRef.current) {
-              console.log("EMERGENCY TRIGGERED! 5 blinks detected within 3 seconds. Making emergency call...");
-              setEmergencyTriggered(true);
-              onEmergencyTriggerRef.current('Excessive Blinking (5+ blinks in 3 seconds)');
-            }
-
-            // Update consecutive blinks count for display
-            setConsecutiveBlinks(blinkTimesRef.current.length);
-          }
+          // Don't count the blink yet - wait for validation when eye opens
         }
       } else { // Eye is open
-        // Only count as blink end if we were previously closed and it lasted long enough
-        if (isCurrentlyClosedRef.current) {
+        // Only process if we were previously closed (blink end)
+        if (isCurrentlyClosedRef.current && pendingBlinkRef.current) {
           const blinkDuration = currentTime - blinkStartTimeRef.current;
           console.log(`onResults: Eye opened, blink duration: ${blinkDuration}ms`);
           
-          // If blink was too short, it might be noise - don't count it
-          if (blinkDuration < minBlinkDuration.current) {
-            console.log(`onResults: Blink too short (${blinkDuration}ms), discarding.`);
-            // Remove the last blink from the array if it was too short
-            blinkTimesRef.current.pop();
-            setBlinkCount(prev => Math.max(0, prev - 1));
+          // Validate blink duration before counting
+          if (blinkDuration >= minBlinkDuration.current && blinkDuration <= maxBlinkDuration.current) {
+            // Valid blink - check cooldown and count it
+            if (currentTime - lastBlinkTimeRef.current > cooldown.current) {
+              setBlinkCount(prev => {
+                const newCount = prev + 1;
+                console.log(`onResults: Valid blink counted! New count: ${newCount}`);
+                return newCount;
+              });
+              lastBlinkTimeRef.current = currentTime;
+
+              // Add current blink time to the array
+              blinkTimesRef.current.push(currentTime);
+
+              // Remove blinks older than 3 seconds
+              const threeSecondsAgo = currentTime - blinkTimeoutRef.current;
+              blinkTimesRef.current = blinkTimesRef.current.filter(time => time > threeSecondsAgo);
+
+              // Check if we have 5 or more blinks within 3 seconds
+              if (blinkTimesRef.current.length >= consecutiveEmergencyBlinksRef.current && !emergencyTriggeredRef.current) {
+                console.log("EMERGENCY TRIGGERED! 5 blinks detected within 3 seconds. Making emergency call...");
+                setEmergencyTriggered(true);
+                onEmergencyTriggerRef.current('Excessive Blinking (5+ blinks in 3 seconds)');
+              }
+
+              // Update consecutive blinks count for display
+              setConsecutiveBlinks(blinkTimesRef.current.length);
+            } else {
+              console.log(`onResults: Blink ignored due to cooldown (${currentTime - lastBlinkTimeRef.current}ms < ${cooldown.current}ms)`);
+            }
+          } else {
+            // Invalid blink duration - just log it, don't count or decrease
+            if (blinkDuration < minBlinkDuration.current) {
+              console.log(`onResults: Blink too short (${blinkDuration}ms), ignored.`);
+            } else {
+              console.log(`onResults: Blink too long (${blinkDuration}ms), ignored.`);
+            }
           }
-          // If blink was too long, it might be intentional closing - don't count it
-          else if (blinkDuration > maxBlinkDuration.current) {
-            console.log(`onResults: Blink too long (${blinkDuration}ms), discarding.`);
-            // Remove the last blink from the array if it was too long
-            blinkTimesRef.current.pop();
-            setBlinkCount(prev => Math.max(0, prev - 1));
-          }
+          
+          // Reset pending blink state
+          pendingBlinkRef.current = false;
+          setPendingBlink(false); // Clear visual feedback
         }
         
         isCurrentlyClosedRef.current = false; // Reset to open
@@ -223,14 +230,23 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
     } else {
       setFaceDetected(false);
       console.log('onResults: No face detected.');
-      // Reset blink count if face not detected for a while
-      setBlinkCount(0);
-      setConsecutiveBlinks(0);
-      setEmergencyTriggered(false);
-      lastBlinkTimeRef.current = 0;
-      isCurrentlyClosedRef.current = false; // Also reset this on cleanup
-      prevLandmarksRef.current = null;
-      blinkTimesRef.current = []; // Reset blink times array
+      
+      // Only reset if face has been missing for more than 2 seconds to avoid flickering
+      if (!faceDetectionTimeoutRef.current) {
+        faceDetectionTimeoutRef.current = setTimeout(() => {
+          console.log('onResults: Face missing for 2+ seconds, resetting counters.');
+          setBlinkCount(0);
+          setConsecutiveBlinks(0);
+          setEmergencyTriggered(false);
+          setPendingBlink(false);
+          lastBlinkTimeRef.current = 0;
+          isCurrentlyClosedRef.current = false;
+          pendingBlinkRef.current = false;
+          prevLandmarksRef.current = null;
+          blinkTimesRef.current = [];
+          faceDetectionTimeoutRef.current = null;
+        }, 2000);
+      }
       return;
     }
     setProcessingTime(performance.now() - startTime);
@@ -277,10 +293,16 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
       setBlinkCount(0);
       setConsecutiveBlinks(0);
       setEmergencyTriggered(false);
+      setPendingBlink(false);
       lastBlinkTimeRef.current = 0;
       isCurrentlyClosedRef.current = false;
+      pendingBlinkRef.current = false;
       prevLandmarksRef.current = null;
       blinkTimesRef.current = []; // Reset blink times array
+      if (faceDetectionTimeoutRef.current) {
+        clearTimeout(faceDetectionTimeoutRef.current);
+        faceDetectionTimeoutRef.current = null;
+      }
       setError(''); // Clear any previous errors
       setDebugInfo(''); // Clear debug info
       console.log('BlinkDetectionModal: State reset.');
@@ -413,6 +435,7 @@ const BlinkDetectionModal = ({ isOpen, onClose, patientName, familyNumbers = [],
           <p>Blinks in Last 3s: {consecutiveBlinks}/5</p>
           <p>EAR Threshold: {blinkThreshold.current}</p>
           <p>Processing Time: {processingTime.toFixed(1)}ms</p>
+          {pendingBlink && <p className="pending-blink">🔄 Validating blink...</p>}
           {emergencyTriggered && <p className="emergency-alert">EMERGENCY ALERT! 5+ blinks in 3 seconds detected!</p>}
         </div>
         <div className="controls">

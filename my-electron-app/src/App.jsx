@@ -172,7 +172,43 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Care Companion</h1>
+        <div className="header-content">
+          <h1>Care Companion</h1>
+          <nav className="header-menu">
+            <div className="menu-item">
+              <span>Patient</span>
+              <div className="dropdown-menu">
+                <button onClick={() => setIsModalOpen(true)}>📋 Patient Details</button>
+                <button onClick={() => setIsBlinkModalOpen(true)}>👁️ Blink Detection</button>
+                <button onClick={() => console.log('Medical Records')}>📄 Medical Records</button>
+              </div>
+            </div>
+            <div className="menu-item">
+              <span>Monitoring</span>
+              <div className="dropdown-menu">
+                <button onClick={() => setIsBlinkModalOpen(true)}>👁️ Start Detection</button>
+                <button onClick={() => console.log('Health Metrics')}>📊 Health Metrics</button>
+                <button onClick={() => console.log('Alerts')}>🔔 Alerts</button>
+              </div>
+            </div>
+            <div className="menu-item">
+              <span>Emergency</span>
+              <div className="dropdown-menu">
+                <button onClick={handleEmergencyCall} className="emergency-btn">🚨 Emergency Call</button>
+                <button onClick={() => console.log('Contact Management')}>📞 Manage Contacts</button>
+                <button onClick={() => console.log('Emergency Settings')}>⚙️ Settings</button>
+              </div>
+            </div>
+            <div className="menu-item">
+              <span>Help</span>
+              <div className="dropdown-menu">
+                <button onClick={() => console.log('User Guide')}>📖 User Guide</button>
+                <button onClick={() => console.log('About')}>ℹ️ About</button>
+                <button onClick={() => console.log('Support')}>🆘 Support</button>
+              </div>
+            </div>
+          </nav>
+        </div>
       </header>
       <main>
         <div className="container">
